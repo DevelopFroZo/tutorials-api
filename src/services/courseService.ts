@@ -54,9 +54,9 @@ async function getFullById( courseId: number ): Promise<CourseDTO>{
 
       i--;
     }
-
-    course.structure = courseSections;
   }
+
+  course.structure = courseSections;
 
   return course;
 }
