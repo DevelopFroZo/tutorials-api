@@ -1,0 +1,11 @@
+.DS_Store
+
+node_modules/
+build/
+
+npm-debug.log*
+
+configs/**/*.env
+!configs/.env
+
+__safety__

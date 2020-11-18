@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "outDir": "./build",
+    "rootDir": "./src",
+    "strict": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@s/*": [ "services/*" ],
+      "@r/*": [ "repositories/*" ],
+      "@m/*": [ "models/*" ],
+      "@t": [ "types" ],
+      "@t/*": [ "types/*" ],
+      "@u/*": [ "utils/*" ]
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
