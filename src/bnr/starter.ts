@@ -2,7 +2,7 @@ import type { Express } from "express";
 
 import { resolve } from "path";
 
-// import { Aliases } from "./aliases";
+import { Aliases } from "./aliases";
 import * as router from "./router";
 
 const buildPath = resolve( "build" );
@@ -22,9 +22,9 @@ async function index(){
   process.env.PORT = `${PORT}`;
   process.env.NODE_ENV = "production";
 
-  // const aliases = new Aliases( "tsconfig.json", true );
+  const aliases = new Aliases( "tsconfig.json", true );
 
-  // aliases.replaceInOutDir();
+  aliases.replaceInOutDir();
 
   await require( serverPath ).default( ( {}, app: Express ) => {
     router.init( app, srcRoutesPath, buildRoutesPath, true );
