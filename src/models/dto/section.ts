@@ -4,9 +4,8 @@ interface SectionBaseDTO {
   content: string
 }
 
-interface SectionCreateDTO extends Pick<SectionBaseDTO,
-  "name" |
-  "content"
+interface SectionCreateDTO extends Omit<SectionBaseDTO,
+  "id"
 > {}
 
 interface SectionUpdateDTO extends Partial<SectionCreateDTO> {};

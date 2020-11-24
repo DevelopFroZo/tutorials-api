@@ -28,13 +28,8 @@ async function updateOne( sectionId: number, section: SectionUpdateDTO ): Promis
   await sectionRepository.updateOne( pool, sectionId, section );
 }
 
-async function deleteOne( sectionId: number ): Promise<void>{
-  //
-}
-
 export {
   createOne,
   getAll,
-  updateOne,
-  deleteOne
+  updateOne
 };

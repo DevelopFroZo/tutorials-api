@@ -1,6 +1,6 @@
 import { Client, EntityNames } from "@t";
 import type { CourseSectionCreateEntity } from "@m/entities/courseSection";
-import type { CourseSectionDTO, CourseSectionUpdateDTO } from "@m/dto/courseSection";
+import type { CourseSectionHierarchicalDTO, CourseSectionUpdateDTO } from "@m/dto/courseSection";
 
 import { getNextOrderNumber } from "@u/db/orderControl";
 import { ORMLol } from "@u/db/ormLol";
@@ -44,20 +44,16 @@ async function createOne( client: Client, course: CourseSectionCreateEntity ): P
   return id;
 }
 
-async function getByCourseIdWithSection( client: Client, courseId: number ): Promise<CourseSectionDTO[]>{
-  const { rows } = await client.query<CourseSectionDTO>(
+async function getByCourseId( client: Client, courseId: number ): Promise<CourseSectionHierarchicalDTO[]>{
+  const { rows } = await client.query<CourseSectionHierarchicalDTO>(
     `select
-      cs.id, cs.owner_course_section_id, cs.order_number,
-      s.id as section_id, s.name, s.content,
-      ln.name as level_name,
-      '{}'::int[] as nested_sections
+      cs.id, cs.section_id, cs.owner_course_section_id, cs.order_number,
+      ln.name as level_name
     from
       courses_sections as cs,
-      sections as s,
       levels_names as ln
     where
       cs.course_id = $1 and
-      cs.section_id = s.id and
       cs.level = ln.level
     order by cs.level, cs.order_number`,
     [ courseId ]
@@ -80,6 +76,6 @@ async function updateOne(
 
 export {
   createOne,
-  getByCourseIdWithSection,
+  getByCourseId,
   updateOne
 };

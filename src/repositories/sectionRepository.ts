@@ -15,12 +15,23 @@ async function createOne( client: Client, section: TestCreateEntity ): Promise<n
 }
 
 async function getAll( client: Client ): Promise<SectionBaseDTO[]>{
-  const { rows: sections } = await client.query(
+  const { rows } = await client.query<SectionBaseDTO>(
     `select id, name, content
     from sections`
   );
 
-  return sections;
+  return rows;
+}
+
+async function getByIds( client: Client, sectionIds: number[] ): Promise<SectionBaseDTO[]>{
+  const { rows } = await client.query<SectionBaseDTO>(
+    `select id, name, content
+    from sections
+    where id = any( $1 )`,
+    [ sectionIds ]
+  );
+
+  return rows;
 }
 
 async function updateOne( client: Client, sectionId: number, section: SectionUpdateDTO ): Promise<void>{
@@ -42,6 +53,7 @@ async function deleteOne( client: Client, sectionId: number ): Promise<void>{
 export {
   createOne,
   getAll,
+  getByIds,
   updateOne,
   deleteOne
 };

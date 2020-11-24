@@ -1,16 +1,24 @@
 import type { ERequest, EResponse } from "@t";
-import type { CourseDTO, CourseUpdateDTO } from "@m/dto/courses";
+import type { CourseBaseDTO, CourseUpdateDTO } from "@m/dto/courses";
 
 import * as courseService from "@s/courseService";
 
 async function get(
   {
-    params: { id }
-  }: ERequest<CourseDTO>,
-  res: EResponse
+    params: { id },
+    query: { represent }
+  }: ERequest,
+  res: EResponse<CourseBaseDTO>
 ){
   try{
-    const course = await courseService.getFullById( Number( id ) );
+    const id_ = Number( id );
+    let course: CourseBaseDTO;
+
+    if( represent === "testing" ){
+      course = await courseService.getWithQuestionsById( id_ );
+    } else {
+      course = await courseService.getWithSectionsById( id_ );
+    }
 
     res.json( { payload: course } );
   } catch( error ) {

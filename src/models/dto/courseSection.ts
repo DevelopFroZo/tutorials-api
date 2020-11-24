@@ -1,5 +1,3 @@
-import { SectionBaseDTO } from "./section";
-
 interface CourseSectionBaseDTO {
   id: number,
   course_id: number,
@@ -14,16 +12,14 @@ interface CourseSectionCreateDTO extends Pick<CourseSectionBaseDTO,
   "owner_course_section_id"
 > {}
 
-interface CourseSectionDTO extends Pick<CourseSectionBaseDTO,
+interface CourseSectionHierarchicalDTO extends Pick<CourseSectionBaseDTO,
   "id" |
   "owner_course_section_id" |
   "order_number"
->, Omit<SectionBaseDTO,
-  "id"
 > {
   section_id: number,
   level_name: string,
-  nested_sections: CourseSectionDTO[]
+  nested_course_sections?: CourseSectionHierarchicalDTO[]
 }
 
 interface CourseSectionUpdateDTO extends Partial<CourseSectionCreateDTO> {
@@ -33,6 +29,6 @@ interface CourseSectionUpdateDTO extends Partial<CourseSectionCreateDTO> {
 export type {
   CourseSectionBaseDTO,
   CourseSectionCreateDTO,
-  CourseSectionDTO,
+  CourseSectionHierarchicalDTO,
   CourseSectionUpdateDTO
 };

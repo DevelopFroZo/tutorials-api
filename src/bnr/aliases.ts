@@ -19,12 +19,12 @@ class Aliases {
     let { compilerOptions: { rootDir, outDir, baseUrl, paths } } = JSON.parse( readFileSync( tsconfigPath, "utf8" ) );
     const aliases: alias[] = [];
 
-    rootDir = resolve( tsconfigDir, rootDir || "." );
-    outDir = resolve( tsconfigDir, outDir || "." );
+    rootDir = resolve( tsconfigDir, rootDir || "." ).replace( /\\/g, "/" );
+    outDir = resolve( tsconfigDir, outDir || "." ).replace( /\\/g, "/" );
     baseUrl = baseUrl || ".";
 
     for( let test in paths ){
-      let replacement = resolve( outDir, paths[ test ][0] );
+      let replacement = resolve( outDir, paths[ test ][0] ).replace( /\\/g, "/" );
 
       if( rootDir !== outDir ){
         replacement = replacement.replace( rootDir, outDir );
@@ -32,7 +32,7 @@ class Aliases {
 
       let c = 1;
 
-      replacement = replacement.replace( /\*/g, () => `$${c++}` ).replace( /\\/g, "\\\\" );
+      replacement = replacement.replace( /\*/g, () => `$${c++}` );
 
       aliases.push( {
         test: new RegExp( `^${test.replace( /\*/g, "(.*)" )}` ),
@@ -85,7 +85,7 @@ class Aliases {
       writeFileSync( path, txt );
   
       if( this.isLog ){
-        console.info( `> \x1b[36m[\x1b[31mALIAS\x1b[36m] Modify \x1b[35m${path.replace( `${this.outDir}\\`, "" ).replace( /\\/g, "/" )}\x1b[0m` );
+        console.info( `> \x1b[36m[\x1b[31mALIAS\x1b[36m] Modify \x1b[35m${path.replace( `${this.outDir}/`, "" )}\x1b[0m` );
       }
     }
   }

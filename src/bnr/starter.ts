@@ -5,10 +5,10 @@ import { resolve } from "path";
 import { Aliases } from "./aliases";
 import * as router from "./router";
 
-const buildPath = resolve( "build" );
-const serverPath = resolve( buildPath, "server.js" );
-const srcRoutesPath = resolve( "src", "controllers" );
-const buildRoutesPath = resolve( buildPath, "controllers" );
+const buildPath = resolve( "build" ).replace( /\\/g, "/" );
+const serverPath = resolve( buildPath, "server.js" ).replace( /\\/g, "/" );
+const srcRoutesPath = resolve( "src", "controllers" ).replace( /\\/g, "/" );
+const buildRoutesPath = resolve( buildPath, "controllers" ).replace( /\\/g, "/" );
 
 async function index(){
   const PORT = Number( process.argv[2] );

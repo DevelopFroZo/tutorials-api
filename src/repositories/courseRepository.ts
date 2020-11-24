@@ -1,6 +1,6 @@
 import { Client, EntityNames } from "@t";
 import type { CourseCreateEntity } from "@m/entities/courses";
-import type { CourseDTO, CourseUpdateDTO } from "@m/dto/courses";
+import type { CourseBaseDTO, CourseUpdateDTO } from "@m/dto/courses";
 
 import { ORMLol } from "@u/db/ormLol";
 
@@ -14,7 +14,7 @@ async function createOne( client: Client, course: CourseCreateEntity ): Promise<
   return id;
 }
 
-async function getAll( client: Client ): Promise<CourseDTO[]>{
+async function getAll( client: Client ): Promise<CourseBaseDTO[]>{
   const { rows: courses } = await client.query(
     `select id, name, description
     from courses`
@@ -23,8 +23,8 @@ async function getAll( client: Client ): Promise<CourseDTO[]>{
   return courses;
 }
 
-async function getById( client: Client, courseId: number ): Promise<CourseDTO>{
-  const { rows: [ course = null ] } = await client.query<CourseDTO>(
+async function getById( client: Client, courseId: number ): Promise<CourseBaseDTO>{
+  const { rows: [ course = null ] } = await client.query<CourseBaseDTO>(
     `select id, name, description
     from courses
     where id = $1`,

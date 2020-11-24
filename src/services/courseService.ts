@@ -1,11 +1,16 @@
-import type { CourseCreateDTO, CourseDTO, CourseUpdateDTO } from "@m/dto/courses";
+import type { CourseCreateDTO, CourseBaseDTO, CourseUpdateDTO } from "@m/dto/courses";
 
 import { pool, Transaction } from "@u/db/clients";
 
+import * as courseSectionService from "@s/courseSectionService";
+
 import * as courseRepository from "@r/courseRepository";
 import * as courseSectionRepository from "@r/courseSectionRepository";
+import * as sectionRepository from "@r/sectionRepository";
+import * as questionRespository from "@r/questionRespository";
+import * as possibleAnswerRepository from "@r/possibleAnswerRepository";
 
-import { createMap } from "@u/merger";
+import { createMap, mergeMultiple, mergeSingle } from "@u/merger";
 
 async function createOne( course: CourseCreateDTO, created_by_user_id: number ): Promise<number>{
   const transaction = new Transaction();
@@ -20,45 +25,71 @@ async function createOne( course: CourseCreateDTO, created_by_user_id: number ):
   return id;
 }
 
-async function getAll(): Promise<CourseDTO[]>{
+async function getAll(): Promise<CourseBaseDTO[]>{
   const courses = await courseRepository.getAll( pool );
 
   return courses;
 }
 
-async function getFullById( courseId: number ): Promise<CourseDTO>{
+async function getWithSectionsById( courseId: number ): Promise<CourseBaseDTO>{
   const course = await courseRepository.getById( pool, courseId );
   
   if( !course ){
-    return course;
+    return null;
   }
 
-  const courseSections = await courseSectionRepository.getByCourseIdWithSection( pool, courseId );
+  const courseWithSections = { ...course, structure: [] };
+  const courseSections = await courseSectionRepository.getByCourseId( pool, courseId );
 
-  if( courseSections.length > 0 ){
-    const map = createMap( courseSections, "id" );
-    let i = courseSections.length - 1;
+  if( courseSections.length === 0 ){
+    return courseWithSections;
+  }
 
-    while( i > -1 ){
-      const courseSection = courseSections[i];
+  const map = createMap( courseSections, "section_id" );
+  const sectionIds = Object.keys( map ).map( Number );
+  const sections = await sectionRepository.getByIds( pool, sectionIds );
 
-      if( courseSection.owner_course_section_id ){
-        const indexes = map[ courseSection.owner_course_section_id ];
+  mergeSingle( courseSections, sections, "id", "section", { map } );
+  courseSectionService.makeHierarchical( courseSections );
+  courseWithSections.structure = courseSections;
 
-        for( const index of indexes ){
-          courseSections[ index ].nested_sections.unshift( courseSection );
-        }
+  return courseWithSections;
+}
 
-        courseSections.splice( i, 1 );
-      }
+async function getWithQuestionsById( courseId: number ): Promise<CourseBaseDTO>{
+  const course = await courseRepository.getById( pool, courseId );
+  
+  if( !course ){
+    return null;
+  }
 
-      i--;
+  const courseWithQuestions = { ...course, structure: [] };
+  const courseSections = await courseSectionRepository.getByCourseId( pool, courseId );
+
+  if( courseSections.length === 0 ){
+    return courseWithQuestions;
+  }
+
+  let map = createMap( courseSections, "section_id" );
+  const sectionIds = Object.keys( map ).map( Number );
+  const questions = await questionRespository.getBySectionIds( pool, sectionIds );
+
+  if( questions.length > 0 ){
+    mergeMultiple( courseSections, questions, "owner_section_id", "questions", { map } );
+    map = createMap( questions, "id" );
+
+    const questionIds = Object.keys( map ).map( Number );
+    const possibleAnswers = await possibleAnswerRepository.getByQuestionIds( pool, questionIds );
+
+    if( possibleAnswers.length > 0 ){
+      mergeMultiple( questions, possibleAnswers, "owner_question_id", "possible_answers", { map } );
     }
   }
 
-  course.structure = courseSections;
+  courseSectionService.makeHierarchical( courseSections );
+  courseWithQuestions.structure = courseSections;
 
-  return course;
+  return courseWithQuestions;
 }
 
 async function updateOne( courseId: number, course: CourseUpdateDTO ): Promise<void>{
@@ -71,7 +102,8 @@ async function deleteOne( courseId: number ): Promise<void>{
 
 export {
   createOne,
-  getFullById,
+  getWithSectionsById,
+  getWithQuestionsById,
   getAll,
   updateOne,
   deleteOne

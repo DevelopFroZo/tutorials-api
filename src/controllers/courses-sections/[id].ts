@@ -28,17 +28,6 @@ async function put(
   }
 }
 
-// #fix
-async function del(
-  {
-    params: { id }
-  }: ERequest,
-  res: EResponse
-){
-  res.sendStatus( 501 );
-}
-
 export {
-  put,
-  del
+  put
 };

@@ -7,13 +7,13 @@ import { scan } from "./scan";
 let pages: string[] = [];
 
 function scanPredicate( path: string ){
-  return !path.match( /\\_/ );
+  return !path.match( /\/_/ );
 }
 
 function makeImport( path: string, srcPagesPath: string, buildPagesPath: string ){
   path = path.replace( srcPagesPath, buildPagesPath );
   path = path.replace( /\.ts$/, ".js" );
-  path = resolve( path );
+  path = resolve( path ).replace( /\\/g, "/" );
 
   return path;
 }
@@ -21,9 +21,8 @@ function makeImport( path: string, srcPagesPath: string, buildPagesPath: string 
 function makeUri( path: string, buildPagesPath: string ){
   path = path.replace( buildPagesPath, "" );
   path = path.replace( /\.js$/, "" );
-  path = path.replace( /\\index$/, "" );
-  path = `/${path.replace( /^\\/, "" )}`;
-  path = path.replace( /\\/g, "\/" );
+  path = path.replace( /\/index$/, "" );
+  path = `/${path.replace( /^\//, "" )}`;
   path = path.replace( /\[(.*?)\]/g, ":$1" );
 
   return path;
@@ -117,7 +116,7 @@ function attachFromFiles( server: Express, paths: string[], buildPagesPath: stri
 }
 
 function reloadFromFiles( server: Express, paths: string[], srcPagesPath: string, buildPagesPath: string ){
-  paths = paths.filter( path => path.startsWith( buildPagesPath ) && !path.match( /\\_/ ) );
+  paths = paths.filter( path => path.startsWith( buildPagesPath ) && !path.match( /\/_/ ) );
 
   if( paths.length === 0 ) return [];
 

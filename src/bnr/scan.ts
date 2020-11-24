@@ -8,10 +8,10 @@ function scan( path: string ){
   let result: string[] = [];
 
   for( const item of items ){
-    const newPath = `${path}\\${item}`;
+    const newPath = `${path}/${item}`;
 
     if( isFile( newPath ) ){
-      result.push( resolve( newPath ) );
+      result.push( resolve( newPath ).replace( /\\/g, "/" ) );
 
       continue;
     }
