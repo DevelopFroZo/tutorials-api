@@ -12,7 +12,7 @@ function isFile( path: string ){
   try{
     return lstatSync( path ).isFile();
   } catch( error ) {
-    if( error.errno === -4058 ){
+    if( error.errno === -4058 || error.errno === -2 ){
       return false;
     }
 
