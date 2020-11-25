@@ -12,13 +12,13 @@ async function get(
 ){
   try{
     const id_ = Number( id );
-    let course: CourseBaseDTO;
+    const include: ("sections" | "questions")[] = [ "sections" ];
 
     if( represent === "testing" ){
-      course = await courseService.getWithQuestionsById( id_ );
-    } else {
-      course = await courseService.getWithSectionsById( id_ );
+      include.push( "questions" );
     }
+
+    const course = await courseService.getById( id_, include );
 
     res.json( { payload: course } );
   } catch( error ) {

@@ -38,6 +38,8 @@ async function startWatch(){
   watch( buildPath, {
     ignoreInitial: true
   } ).on( "all", async ( _, path ) => {
+    path = path.replace( /\\/g, "/" );
+
     if( !isFile( path ) || path === __filename || !/\.(js|ts)/.test( path ) ){
       return;
     }

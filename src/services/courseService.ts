@@ -31,65 +31,51 @@ async function getAll(): Promise<CourseBaseDTO[]>{
   return courses;
 }
 
-async function getWithSectionsById( courseId: number ): Promise<CourseBaseDTO>{
+async function getById( courseId: number, include: ("sections" | "questions")[] = [] ){
   const course = await courseRepository.getById( pool, courseId );
   
   if( !course ){
     return null;
   }
 
-  const courseWithSections = { ...course, structure: [] };
   const courseSections = await courseSectionRepository.getByCourseId( pool, courseId );
 
   if( courseSections.length === 0 ){
-    return courseWithSections;
+    return course;
   }
 
-  const map = createMap( courseSections, "section_id" );
-  const sectionIds = Object.keys( map ).map( Number );
-  const sections = await sectionRepository.getByIds( pool, sectionIds );
+  const courseWithStructure = { ...course, structure: [] };
 
-  mergeSingle( courseSections, sections, "id", "section", { map } );
-  courseSectionService.makeHierarchical( courseSections );
-  courseWithSections.structure = courseSections;
+  for( const entity of include ){
+    let map = createMap( courseSections, "section_id" );
+    const sectionIds = Object.keys( map ).map( Number );
 
-  return courseWithSections;
-}
+    if( entity === "sections" ){
+      const sections = await sectionRepository.getByIds( pool, sectionIds );
 
-async function getWithQuestionsById( courseId: number ): Promise<CourseBaseDTO>{
-  const course = await courseRepository.getById( pool, courseId );
-  
-  if( !course ){
-    return null;
-  }
+      mergeSingle( courseSections, sections, "id", "section", { map } );
+    }
+    else if( entity === "questions" ){
+      const questions = await questionRespository.getBySectionIds( pool, sectionIds );
 
-  const courseWithQuestions = { ...course, structure: [] };
-  const courseSections = await courseSectionRepository.getByCourseId( pool, courseId );
+      if( questions.length > 0 ){
+        mergeMultiple( courseSections, questions, "owner_section_id", "questions", { map } );
+        map = createMap( questions, "id" );
 
-  if( courseSections.length === 0 ){
-    return courseWithQuestions;
-  }
+        const questionIds = Object.keys( map ).map( Number );
+        const possibleAnswers = await possibleAnswerRepository.getByQuestionIds( pool, questionIds );
 
-  let map = createMap( courseSections, "section_id" );
-  const sectionIds = Object.keys( map ).map( Number );
-  const questions = await questionRespository.getBySectionIds( pool, sectionIds );
-
-  if( questions.length > 0 ){
-    mergeMultiple( courseSections, questions, "owner_section_id", "questions", { map } );
-    map = createMap( questions, "id" );
-
-    const questionIds = Object.keys( map ).map( Number );
-    const possibleAnswers = await possibleAnswerRepository.getByQuestionIds( pool, questionIds );
-
-    if( possibleAnswers.length > 0 ){
-      mergeMultiple( questions, possibleAnswers, "owner_question_id", "possible_answers", { map } );
+        if( possibleAnswers.length > 0 ){
+          mergeMultiple( questions, possibleAnswers, "owner_question_id", "possible_answers", { map } );
+        }
+      }
     }
   }
 
   courseSectionService.makeHierarchical( courseSections );
-  courseWithQuestions.structure = courseSections;
+  courseWithStructure.structure = courseSections;
 
-  return courseWithQuestions;
+  return courseWithStructure;
 }
 
 async function updateOne( courseId: number, course: CourseUpdateDTO ): Promise<void>{
@@ -102,8 +88,7 @@ async function deleteOne( courseId: number ): Promise<void>{
 
 export {
   createOne,
-  getWithSectionsById,
-  getWithQuestionsById,
+  getById,
   getAll,
   updateOne,
   deleteOne
