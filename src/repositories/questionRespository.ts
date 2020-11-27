@@ -11,7 +11,8 @@ async function getBySectionIds( client: Client, sectionIds: number[] ): Promise<
       questions_types as qt
     where
       q.owner_section_id = any( $1 ) and
-      q.question_type_id = qt.id`,
+      q.question_type_id = qt.id
+    order by q.order_number`,
     [ sectionIds ]
   );
 
