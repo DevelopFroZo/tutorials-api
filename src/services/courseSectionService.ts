@@ -17,10 +17,6 @@ async function makeHierarchical( courseSections: CourseSectionHierarchicalDTO[] 
       const indexes = mapForStructure[ courseSection.owner_course_section_id ];
 
       for( const index of indexes ){
-        if( !( "nested_course_sections" in courseSections[ index ] ) ){
-          courseSections[ index ].nested_course_sections = [];
-        }
-
         courseSections[ index ].nested_course_sections.unshift( courseSection );
       }
 

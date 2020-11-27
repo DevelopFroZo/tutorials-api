@@ -48,7 +48,8 @@ async function getByCourseId( client: Client, courseId: number ): Promise<Course
   const { rows } = await client.query<CourseSectionHierarchicalDTO>(
     `select
       cs.id, cs.section_id, cs.owner_course_section_id, cs.order_number,
-      ln.name as level_name
+      ln.name as level_name,
+      '{}'::int[] as nested_course_sections
     from
       courses_sections as cs,
       levels_names as ln
