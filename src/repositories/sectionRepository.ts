@@ -1,10 +1,9 @@
 import { Client, EntityNames } from "@t";
-import type { TestCreateEntity } from "@m/entities/section";
-import type { SectionBaseDTO, SectionUpdateDTO } from "@m/dto/section";
+import type { SectionCreateEntity, SectionReadEntity, SectionUpdateEntity } from "@m/entities/section";
 
 import { ORMLol } from "@u/db/ormLol";
 
-async function createOne( client: Client, section: TestCreateEntity ): Promise<number>{
+async function createOne( client: Client, section: SectionCreateEntity ): Promise<number>{
   const ormLol = new ORMLol( client, EntityNames.SECTIONS, section );
 
   const { rows: [ { id } ] } = await ormLol.insert<{
@@ -14,8 +13,8 @@ async function createOne( client: Client, section: TestCreateEntity ): Promise<n
   return id;
 }
 
-async function getAll( client: Client ): Promise<SectionBaseDTO[]>{
-  const { rows } = await client.query<SectionBaseDTO>(
+async function getAll( client: Client ): Promise<SectionReadEntity[]>{
+  const { rows } = await client.query<SectionReadEntity>(
     `select id, name, content
     from sections`
   );
@@ -23,8 +22,8 @@ async function getAll( client: Client ): Promise<SectionBaseDTO[]>{
   return rows;
 }
 
-async function getByIds( client: Client, sectionIds: number[] ): Promise<SectionBaseDTO[]>{
-  const { rows } = await client.query<SectionBaseDTO>(
+async function getByIds( client: Client, sectionIds: number[] ): Promise<SectionReadEntity[]>{
+  const { rows } = await client.query<SectionReadEntity>(
     `select id, name, content
     from sections
     where id = any( $1 )`,
@@ -34,7 +33,7 @@ async function getByIds( client: Client, sectionIds: number[] ): Promise<Section
   return rows;
 }
 
-async function updateOne( client: Client, sectionId: number, section: SectionUpdateDTO ): Promise<void>{
+async function updateOne( client: Client, sectionId: number, section: SectionUpdateEntity ): Promise<void>{
   const ormLol = new ORMLol( client, EntityNames.SECTIONS, section );
 
   await ormLol.update( {

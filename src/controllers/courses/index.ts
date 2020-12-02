@@ -1,5 +1,5 @@
 import type { ERequest, EResponse } from "@t";
-import type { CourseCreateDTO, CourseBaseDTO } from "@m/dto/courses";
+import type { CourseCreateDTO, CourseReadDTO } from "@m/dto/course";
 
 import * as courseService from "@s/courseService";
 
@@ -28,7 +28,7 @@ async function post(
   }
 }
 
-async function get( {}, res: EResponse<CourseBaseDTO[]> ){
+async function get( {}, res: EResponse<CourseReadDTO[]> ){
   try{
     const courses = await courseService.getAll();
 

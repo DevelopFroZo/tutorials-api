@@ -1,4 +1,4 @@
-import type { CourseSectionCreateDTO, CourseSectionHierarchicalDTO, CourseSectionUpdateDTO } from "@m/dto/courseSection";
+import type { CourseSectionCreateDTO, CourseSectionReadDTO } from "@m/dto/courseSection";
 
 import { pool, Transaction } from "@u/db/clients";
 
@@ -6,7 +6,7 @@ import * as courseSectionRepository from "@r/courseSectionRepository";
 
 import { createMap } from "@u/merger";
 
-async function makeHierarchical( courseSections: CourseSectionHierarchicalDTO[] ){
+function makeHierarchical( courseSections: CourseSectionReadDTO[] ): void{
   const mapForStructure = createMap( courseSections, "id" );
   let i = courseSections.length - 1;
 
@@ -34,9 +34,7 @@ async function createOne( courseSection: CourseSectionCreateDTO, course_id: numb
   const id = await courseSectionRepository.createOne( transaction, {
     ...courseSection,
     course_id,
-    owner_course_section_id,
-    order_number: null,
-    level: null
+    owner_course_section_id
   } );
 
   await transaction.end();
@@ -44,12 +42,7 @@ async function createOne( courseSection: CourseSectionCreateDTO, course_id: numb
   return id;
 }
 
-async function updateOne( courseSectionId: number, courseSection: CourseSectionUpdateDTO ): Promise<void>{
-  await courseSectionRepository.updateOne( pool, courseSectionId, courseSection );
-}
-
 export {
   makeHierarchical,
-  createOne,
-  updateOne
+  createOne
 };

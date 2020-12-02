@@ -1,4 +1,4 @@
-import type { CourseCreateDTO, CourseBaseDTO, CourseUpdateDTO } from "@m/dto/courses";
+import type { CourseCreateDTO, CourseReadDTO, CourseUpdateDTO } from "@m/dto/course";
 
 import { pool, Transaction } from "@u/db/clients";
 
@@ -25,7 +25,7 @@ async function createOne( course: CourseCreateDTO, created_by_user_id: number ):
   return id;
 }
 
-async function getAll(): Promise<CourseBaseDTO[]>{
+async function getAll(): Promise<CourseReadDTO[]>{
   const courses = await courseRepository.getAll( pool );
 
   return courses;

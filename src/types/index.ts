@@ -9,7 +9,9 @@ export type Client = Pool | Transaction
 export enum EntityNames {
   SECTIONS = "sections",
   COURSES = "courses",
-  COURSES_SECTIONS = "courses_sections"
+  COURSES_SECTIONS = "courses_sections",
+  QUESTIONS = "questions",
+  POSSIBLE_ANSWERS = "possible_answers"
 }
 
 export enum Rights {

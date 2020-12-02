@@ -1,6 +1,5 @@
 import { Client, EntityNames } from "@t";
-import type { CourseCreateEntity } from "@m/entities/courses";
-import type { CourseBaseDTO, CourseUpdateDTO } from "@m/dto/courses";
+import type { CourseCreateEntity, CourseReadEntity, CourseUpdateEntity } from "@m/entities/course";
 
 import { ORMLol } from "@u/db/ormLol";
 
@@ -14,7 +13,7 @@ async function createOne( client: Client, course: CourseCreateEntity ): Promise<
   return id;
 }
 
-async function getAll( client: Client ): Promise<CourseBaseDTO[]>{
+async function getAll( client: Client ): Promise<CourseReadEntity[]>{
   const { rows: courses } = await client.query(
     `select id, name, description
     from courses`
@@ -23,8 +22,8 @@ async function getAll( client: Client ): Promise<CourseBaseDTO[]>{
   return courses;
 }
 
-async function getById( client: Client, courseId: number ): Promise<CourseBaseDTO>{
-  const { rows: [ course = null ] } = await client.query<CourseBaseDTO>(
+async function getById( client: Client, courseId: number ): Promise<CourseReadEntity>{
+  const { rows: [ course = null ] } = await client.query<CourseReadEntity>(
     `select id, name, description
     from courses
     where id = $1`,
@@ -34,7 +33,7 @@ async function getById( client: Client, courseId: number ): Promise<CourseBaseDT
   return course;
 }
 
-async function updateOne( client: Client, courseId: number, course: CourseUpdateDTO ): Promise<void>{
+async function updateOne( client: Client, courseId: number, course: CourseUpdateEntity ): Promise<void>{
   const ormLol = new ORMLol( client, EntityNames.COURSES, course );
 
   await ormLol.update( {

@@ -1,5 +1,5 @@
 import type { ERequest, EResponse } from "@t";
-import type { SectionCreateDTO, SectionBaseDTO } from "@m/dto/section";
+import type { SectionCreateDTO, SectionReadDTO } from "@m/dto/section";
 
 import * as sectionService from "@s/sectionService";
 
@@ -28,7 +28,7 @@ async function post(
   }
 }
 
-async function get( {}, res: EResponse<SectionBaseDTO[]> ){
+async function get( {}, res: EResponse<SectionReadDTO[]> ){
   try{
     const sections = await sectionService.getAll();
 

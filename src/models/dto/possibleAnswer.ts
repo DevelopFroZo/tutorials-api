@@ -1,12 +1,13 @@
-interface PossibleAnswerBaseDTO {
-  id: number,
-  owner_question_id: number,
-  text: string,
-  is_right: boolean,
-  points: number,
-  order_number: number
-}
+import { PossibleAnswerCreateEntity, PossibleAnswerReadEntity } from "../entities/possibleAnswer";
 
-export {
-  PossibleAnswerBaseDTO
+interface PossibleAnswerCreateDTO extends Omit<PossibleAnswerCreateEntity,
+  "owner_question_id" |
+  "created_by_user_id"
+> {}
+
+interface PossibleAnswerReadDTO extends PossibleAnswerReadEntity {}
+
+export type {
+  PossibleAnswerCreateDTO,
+  PossibleAnswerReadDTO
 };

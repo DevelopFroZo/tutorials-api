@@ -1,6 +1,5 @@
 import { Client, EntityNames } from "@t";
-import type { CourseSectionCreateEntity } from "@m/entities/courseSection";
-import type { CourseSectionHierarchicalDTO, CourseSectionUpdateDTO } from "@m/dto/courseSection";
+import type { CourseSectionCreateEntity, CourseSectionReadEntity } from "@m/entities/courseSection";
 
 import { getNextOrderNumber } from "@u/db/orderControl";
 import { ORMLol } from "@u/db/ormLol";
@@ -24,9 +23,9 @@ async function getLevelByCourseIdAndOwnerCourseSectionId(
   return row?.level || 1;
 }
 
-async function createOne( client: Client, course: CourseSectionCreateEntity ): Promise<number>{
-  const { course_id, owner_course_section_id } = course;
-  const ormLol = new ORMLol( client, EntityNames.COURSES_SECTIONS, course );
+async function createOne( client: Client, courseSection: CourseSectionCreateEntity ): Promise<number>{
+  const { course_id, owner_course_section_id } = courseSection;
+  const ormLol = new ORMLol( client, EntityNames.COURSES_SECTIONS, courseSection );
 
   const order_number = await getNextOrderNumber( client, EntityNames.COURSES_SECTIONS, {
     course_id,
@@ -44,8 +43,8 @@ async function createOne( client: Client, course: CourseSectionCreateEntity ): P
   return id;
 }
 
-async function getByCourseId( client: Client, courseId: number ): Promise<CourseSectionHierarchicalDTO[]>{
-  const { rows } = await client.query<CourseSectionHierarchicalDTO>(
+async function getByCourseId( client: Client, courseId: number ): Promise<CourseSectionReadEntity[]>{
+  const { rows } = await client.query<CourseSectionReadEntity>(
     `select
       cs.id, cs.section_id, cs.owner_course_section_id, cs.order_number,
       ln.name as level_name,
@@ -63,20 +62,7 @@ async function getByCourseId( client: Client, courseId: number ): Promise<Course
   return rows;
 }
 
-async function updateOne(
-  client: Client,
-  courseSectionId: number,
-  courseSection: CourseSectionUpdateDTO
-): Promise<void>{
-  const ormLol = new ORMLol( client, EntityNames.COURSES_SECTIONS, courseSection );
-
-  await ormLol.update( {
-    id: courseSectionId
-  } );
-}
-
 export {
   createOne,
-  getByCourseId,
-  updateOne
+  getByCourseId
 };

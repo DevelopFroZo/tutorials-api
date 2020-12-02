@@ -1,18 +1,13 @@
-enum QUESTION_TYPES {
-  SINGLE = "single",
-  MULTIPLE = "multiple",
-  FREE = "free"
-}
+import { QuestionCreateEntity, QuestionReadEntity } from "../entities/question";
 
-interface QuestionBaseDTO {
-  id: number,
-  owner_section_id: number,
-  question_type: QUESTION_TYPES,
-  text: string,
-  order_number: number,
-  time_limit: number
-}
+interface QuestionCreateDTO extends Omit<QuestionCreateEntity,
+  "owner_section_id" |
+  "created_by_user_id"
+> {}
 
-export {
-  QuestionBaseDTO
-};
+interface QuestionReadDTO extends QuestionReadEntity {}
+
+export type {
+  QuestionCreateDTO,
+  QuestionReadDTO
+}

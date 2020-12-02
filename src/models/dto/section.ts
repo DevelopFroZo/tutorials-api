@@ -1,17 +1,15 @@
-interface SectionBaseDTO {
-  id: number,
-  name: string,
-  content: string
-}
+import { SectionCreateEntity, SectionReadEntity, SectionUpdateEntity } from "../entities/section";
 
-interface SectionCreateDTO extends Omit<SectionBaseDTO,
-  "id"
+interface SectionCreateDTO extends Omit<SectionCreateEntity,
+  "created_by_user_id"
 > {}
 
-interface SectionUpdateDTO extends Partial<SectionCreateDTO> {};
+interface SectionReadDTO extends SectionReadEntity {}
+
+interface SectionUpdateDTO extends SectionUpdateEntity {}
 
 export type {
-  SectionBaseDTO,
   SectionCreateDTO,
+  SectionReadDTO,
   SectionUpdateDTO
 };

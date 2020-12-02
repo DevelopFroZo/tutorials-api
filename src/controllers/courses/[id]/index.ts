@@ -1,5 +1,5 @@
 import type { ERequest, EResponse } from "@t";
-import type { CourseBaseDTO, CourseUpdateDTO } from "@m/dto/courses";
+import type { CourseReadDTO, CourseUpdateDTO } from "@m/dto/course";
 
 import * as courseService from "@s/courseService";
 
@@ -8,7 +8,7 @@ async function get(
     params: { id },
     query: { represent }
   }: ERequest,
-  res: EResponse<CourseBaseDTO>
+  res: EResponse<CourseReadDTO>
 ){
   try{
     const id_ = Number( id );
