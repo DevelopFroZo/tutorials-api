@@ -3,20 +3,25 @@ import { resolve } from "path";
 
 import { isFile } from "./isFile";
 
-function scan( path: string ){
+function scan( path: string ): string[]{
   const items = readdirSync( path );
-  let result: string[] = [];
+  const result: string[] = [];
+  const dirs: string[] = [];
 
   for( const item of items ){
-    const newPath = `${path}/${item}`;
+    const newPath = resolve( path, item );
 
     if( isFile( newPath ) ){
-      result.push( resolve( newPath ).replace( /\\/g, "/" ) );
+      result.push( newPath );
 
       continue;
     }
 
-    result = [ ...result, ...scan( newPath ) ];
+    dirs.push( newPath );
+  }
+
+  for( const dir of dirs ){
+    result.push( ...scan( dir ) );
   }
 
   return result;

@@ -9,11 +9,11 @@ import * as router from "./router";
 import { isFile } from "./isFile";
 import { uncacheFile } from "./uncacheFile";
 
-const buildPath = resolve( "build" ).replace( /\\/g, "/" );
-const serverPath = resolve( buildPath, "server.js" ).replace( /\\/g, "/" );
-const srcRoutesPath = resolve( "src", "controllers" ).replace( /\\/g, "/" );
-const buildRoutesPath = resolve( buildPath, "controllers" ).replace( /\\/g, "/" );
-const utilsPath = resolve( buildPath, "bnr" ).replace( /\\/g, "/" );
+const buildPath = resolve( "build" );
+const serverPath = resolve( buildPath, "server.js" );
+const srcRoutesPath = resolve( "src", "controllers" );
+const buildRoutesPath = resolve( buildPath, "controllers" );
+const utilsPath = resolve( buildPath, "bnr" );
 
 async function startWatch(){
   const aliases = new Aliases( "tsconfig.json" );
@@ -38,8 +38,6 @@ async function startWatch(){
   watch( buildPath, {
     ignoreInitial: true
   } ).on( "all", async ( _, path ) => {
-    path = path.replace( /\\/g, "/" );
-
     if( !isFile( path ) || path === __filename || !/\.(js|ts)/.test( path ) ){
       return;
     }

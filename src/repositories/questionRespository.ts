@@ -27,7 +27,8 @@ async function createOne( client: Client, question: QuestionCreateEntity ): Prom
   const question_type_id = await getQuestionTypeIdByName( client, question_type );
   const order_number = await getNextOrderNumber( client, EntityNames.QUESTIONS, { owner_section_id } );
 
-  ormLol.setFields( { order_number, question_type_id } );
+  // #fix complexity to real value
+  ormLol.setFields( { order_number, question_type_id, complexity: 1 } );
 
   const { rows: [ { id } ] } = await ormLol.insert<{
     id: number
@@ -39,7 +40,7 @@ async function createOne( client: Client, question: QuestionCreateEntity ): Prom
 async function getBySectionIds( client: Client, sectionIds: number[] ): Promise<QuestionReadEntity[]>{
   const { rows } = await client.query<QuestionReadEntity>(
     `select
-      q.id, q.owner_section_id, q.text, q.order_number,
+      q.id, q.owner_section_id, q.text, q.complexity, q.order_number,
       qt.name as question_type
     from
       questions as q,

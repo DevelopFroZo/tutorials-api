@@ -9,6 +9,7 @@ interface QuestionBaseEntity {
   owner_section_id: number,
   question_type_id: number,
   text: string,
+  complexity: number,
   order_number: number,
   created_at: number,
   created_by_user_id: number
