@@ -1,5 +1,7 @@
 import { readdirSync, lstatSync, unlinkSync, rmdirSync } from "fs";
 
+import { resolve } from "path";
+
 import { isFile } from "./isFile";
 
 function dash( count: number ){
@@ -26,7 +28,7 @@ function walkRecursive( path: string, isClear: boolean, isNoTreeShow: boolean, l
   }
 
   for( const item of items ){
-    const newPath = `${path}\\${item}`;
+    const newPath = resolve( path, item );
 
     if( isFile( newPath ) ){
       const size = lstatSync( newPath ).size / 1024;
@@ -68,10 +70,10 @@ function walkRecursive( path: string, isClear: boolean, isNoTreeShow: boolean, l
 
 const isClear = process.argv.some( arg => arg === "--clear" || arg === "-c" );
 const isNoTreeShow = process.argv.some( arg => arg === "--no-tree-show" || arg === "-nts" );
-const [ size, files ] = walkRecursive( "build", isClear, isNoTreeShow );
+const [ backendSize, backendFiles ] = walkRecursive( "build", isClear, isNoTreeShow );
 
 if( !isNoTreeShow ){
   console.log( `> \x1b[36m|\x1b[0m` );
 }
 
-console.log( `> \x1b[36m|- Size: \x1b[35m${size.toFixed( 2 )} Kb\x1b[36m, files: \x1b[35m${files}\x1b[0m` );
+console.log( `> \x1b[36m|- \x1b[31mBackend\x1b[36m size: \x1b[35m${backendSize.toFixed( 2 )} Kb\x1b[36m, backend files: \x1b[35m${backendFiles}\x1b[0m` );

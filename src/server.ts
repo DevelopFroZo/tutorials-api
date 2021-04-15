@@ -14,7 +14,7 @@ import { initPool, pool } from "./utils/db/pool";
 
 import { defaultSession } from "./utils/middlewares/defaultSession";
 
-export default async function index( initialize: ( server: Server, app: Express ) => void ){
+export default async function index( initialize: ( app: Express, server: Server ) => void ){
   const { PORT, NODE_ENV, NODE_PRESET } = process.env;
   const dev = NODE_ENV === "development";
 
@@ -69,7 +69,7 @@ export default async function index( initialize: ( server: Server, app: Express 
     app.use( defaultSession );
   }
 
-  initialize( server, app );
+  initialize( app, server );
 
   server.listen( PORT, () => {
     console.log( `> \x1b[36mStarted \x1b[35m${NODE_ENV}\x1b[36m server on port \x1b[35m${PORT}\x1b[0m` );
